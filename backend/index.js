@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 
+
 const mongoose = require("mongoose");
 const port = process.env.PORT || 4000;
 require('dotenv').config()
@@ -27,11 +28,14 @@ const productRoutes = require('./src/products/product.route');
 const orderRoutes = require('./src/orders/order.route');
 const userRoutes =  require("./src/users/user.route")
 const adminRoutes =  require("./src/stats/admin.stats")
+const discountRoutes = require("./src/discounts/discount.route")
 
 app.use("/api/products", productRoutes)
 app.use("/api/orders", orderRoutes)
 app.use("/api/auth", userRoutes)
 app.use("/api/admin", adminRoutes)
+app.use("/api/discounts", discountRoutes)
+
 
 async function main() {
     await mongoose.connect(process.env.DB_URL);
