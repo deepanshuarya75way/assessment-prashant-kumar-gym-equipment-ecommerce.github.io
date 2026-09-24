@@ -5,14 +5,16 @@ import { getImgUrl } from '../../utils/getImgUrl'
 import { useDispatch } from 'react-redux'
 import { addToCart } from '../../redux/features/cart/cartSlice'
 import { useFetchProductByIdQuery } from '../../redux/features/products/productsApi'
+import {useDiscount} from '../../context/DiscountContext'
 
 const SingleProduct = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { data: product, isLoading, isError } = useFetchProductByIdQuery(id)
   const dispatch = useDispatch()
+  const { getDiscountedPrice } = useDiscount();
 
-  const handleAddToCart = (item) => dispatch(addToCart(item))
+  const handleAddToCart = (item) =>{ dispatch(addToCart(item))}
 
   const [mainImage, setMainImage] = useState(null)
 
@@ -71,11 +73,17 @@ const SingleProduct = () => {
 
             <div className="mb-4">
               <div className="flex items-baseline gap-3">
-                <div className="text-2xl font-bold text-gray-900">${Number(product?.newPrice || 0).toFixed(2)}</div>
-                {product?.oldPrice ? <div className="text-sm text-gray-500 line-through">${Number(product?.oldPrice).toFixed(2)}</div> : null}
-                {product?.oldPrice && product?.newPrice ? (
+                <div className="text-2xl font-bold text-gray-900">${ getDiscountedPrice(Number(product?.newPrice || 0).toFixed(2))}</div>
+                {getDiscountedPrice(Number(product?.newPrice || 0))< Number(product?.newPrice || 0) && (
+                   <div className="text-sm text-gray-500 line-through">${Number(product?.newPrice).toFixed(2)}</div>
+                    )}
+
+                {product?.oldPrice && !getDiscountedPrice(Number(product?.newPrice ||0))<Number (product?.newPrice ||0) ? 
+                <div className="text-sm text-gray-500 line-through">
+${Number(product?.oldPrice).toFixed(2) } </div> : null}
+                     {product?.oldPrice  && product?.newPrice ?(
                   <div className="text-sm text-green-600 font-medium">
-                    {Math.round(((Number(product.oldPrice) - Number(product.newPrice)) / Number(product.oldPrice)) * 100)}% off
+                    {Math.round(((Number(product.oldPrice) - getDiscountedPrice(Number(product.newPrice))) / Number(product.oldPrice)) * 100)}% off
                   </div>
                 ) : null}
               </div>

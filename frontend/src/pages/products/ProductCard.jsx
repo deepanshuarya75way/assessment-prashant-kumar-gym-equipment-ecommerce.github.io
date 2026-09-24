@@ -5,14 +5,16 @@ import { getImgUrl } from '../../utils/getImgUrl'
 import { Link } from'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { addToCart } from '../../redux/features/cart/cartSlice'
+import {useDiscount} from '../../context/DiscountContext'
 
 
 
 const ProductCard = ({product}) => {
   const dispatch = useDispatch();
   const handleAddToCart = (item) => {
-    dispatch(addToCart(item))
+    dispatch(addToCart(item));
   }
+  const{getdiscountedPrice} = useDisount();
 
   const imageSrc = React.useMemo(() => {
     const img = product?.coverImage || ''
@@ -56,13 +58,18 @@ const ProductCard = ({product}) => {
         </p>
 
         {/* Price Section */}
-        <div className="mb-4">
-          <p className="font-semibold text-lg">
-            ${product?.newPrice}
-            {product?.oldPrice && (
-              <span className="line-through text-gray-500 font-normal text-sm ml-2">${product?.oldPrice}</span>
+        <div className="mb-4 flex items-center gap-2">
+          <p className="font-semibold text-lg text-indigo-600">
+            ${getdiscountedPrice(product?.newPrice)}
+            </p>
+            {getdiscountedPrice(product?.newPrice)< product?.newPrice && (
+              <span classname = " line-through text-gray-400 font-normal text-sm"> ${product?.newprice}</span>
             )}
-          </p>
+            {product?.oldprice && getdiscountedPrice(product?.newPrice)<product?.newPrice && (
+              <span className="line-through text-gray-500 font-normal text-sm ml-2">${product?.newPrice}</span>
+            )}
+
+          
         </div>
 
         {/* Add to Cart Button */}

@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { getImgUrl } from '../../utils/getImgUrl';
 import { clearCart, removeFromCart } from '../../redux/features/cart/cartSlice';
+import {useDisount} from '../../context/DiscountContext'
 
 const CartPage = () => {
     const cartItems = useSelector(state => state.cart.cartItems);
     const dispatch =  useDispatch()
+    const {getDiscountedPrice} = useDiscount();
 
-    const totalPrice =  cartItems.reduce((acc, item) => acc + item.newPrice, 0).toFixed(2);
+    const totalPrice =  cartItems.reduce((acc, item) => acc + item.getDiscountedPrice(item.newPrice) *(item.quantity||1),0);
 
     const handleRemoveFromCart = (product) => {
         dispatch(removeFromCart(product))
@@ -57,7 +59,8 @@ const CartPage = () => {
                                                                 <h3>
                                                                     <Link to='/'>{product?.title}</Link>
                                                                 </h3>
-                                                                <p className="sm:ml-4">${product?.newPrice}</p>
+                                                                <p className="sm:ml-4">
+                                                                    ${ (getDiscountedPrice(product?.newPrice)* (product?.quantity|| 1)).toFixed(2)}</p>
                                                             </div>
                                                             <p className="mt-1 text-sm text-gray-500 capitalize"><strong>Category: </strong>{product?.category}</p>
                                                         </div>

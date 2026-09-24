@@ -8,6 +8,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useAuth } from "../context/AuthContext";
 import { clearCart } from "../redux/features/cart/cartSlice";
+import {useDiscount} from "../context/DiscountContext"
 
 const navigation = [
     { name: "Dashboard", href: "/user-dashboard" },
@@ -25,6 +26,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const [searchValue, setSearchValue] = useState("");
     const dispatch = useDispatch();
+    const {userArea, setUserArea, discounts} = useDiscount()
 
     // Sticky navbar on scroll
     useEffect(() => {
@@ -88,6 +90,22 @@ const Navbar = () => {
                         />
                     </div>
                 </div>
+                <div classname = "hidden sm: block">
+                    <select 
+                    value = {userArea}
+                    onChange={(e) => setUserArea(e.target.value)}
+                    className={`border rounded-md px-2 py-1 text-sm outline-none transition-color ${
+                        sticky ? "bg gray-700 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
+                    }`}
+>
+                    <option value= "">selected area</option>
+                    {
+                        discounts.map(d=>{
+                            <option key={d._id} value={d.area} >{d.area}({d.discountPercentage}% off) </option>
+                        })
+                    }
+                     </select>
+                     </div>
                 <div className="relative flex items-center md:space-x-3 space-x-2">
                     <div ref={dropdownRef}>
                         {currentUser ? (
